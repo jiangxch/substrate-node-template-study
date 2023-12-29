@@ -43,7 +43,7 @@ fn revoke_claim_works() {
 fn revoke_claim_failed_when_claim_is_not_exist() {
 	new_test_ext().execute_with(|| {
 		// 生成claim
-		let claim = BoundedVec::try_from(vec![0,1]).unwrap();
+		let claim :BoundedVec<u32, _> = BoundedVec::try_from(vec![0, 1]).unwrap();
 		// 断言error结果 并且不修改链上状态
 		assert_noop!(
 			PoeModule::revoke_claim(RuntimeOrigin::signed(1), claim.clone()),
@@ -73,7 +73,7 @@ fn transfer_claim_works() {
 		// 生成claim
 		let claim = BoundedVec::try_from(vec![0,1]).unwrap();
 		let _ = PoeModule::create_claim(RuntimeOrigin::signed(1), claim.clone());
-		let receive = ensure_signed(RuntimeOrigin::signed(2))?;
+		let receive = 2;
 		// 断言error结果 并且不修改链上状态
 		assert_ok!(PoeModule::trans_claim(RuntimeOrigin::signed(1), claim.clone(), receive));
 	});
@@ -85,7 +85,7 @@ fn transfer_claim_failed_when_claim_is_not_exist() {
 		// 生成claim
 		let claim = BoundedVec::try_from(vec![0,1]).unwrap();
 		// let _ = PoeModule::create_claim(RuntimeOrigin::signed(1), claim.clone());
-		let receive = ensure_signed(RuntimeOrigin::signed(2))?;
+		let receive = 2;
 		// 断言error结果 并且不修改链上状态
 		assert_noop!(PoeModule::trans_claim(RuntimeOrigin::signed(1), claim, receive), Error::<Test>::ClaimNotExist);
 	});
@@ -97,7 +97,7 @@ fn transfer_claim_failed_with_wrong_owner() {
 		// 生成claim
 		let claim = BoundedVec::try_from(vec![0,1]).unwrap();
 		// let _ = PoeModule::create_claim(RuntimeOrigin::signed(1), claim.clone());
-		let receive = ensure_signed(RuntimeOrigin::signed(2))?;
+		let receive = 2;
 		// 断言error结果 并且不修改链上状态
 		assert_noop!(PoeModule::trans_claim(RuntimeOrigin::signed(3), claim, receive), Error::<Test>::NotClaimOwner);
 	});
