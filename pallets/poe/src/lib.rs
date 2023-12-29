@@ -2,6 +2,14 @@
 
 pub use pallet::*;
 
+
+// 条件编译 当test模  编译mock模块
+#[cfg(test)]
+mod mock;
+
+#[cfg(test)]
+mod tests;
+
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::pallet_prelude::*;
@@ -58,6 +66,7 @@ pub mod pallet {
         ClaimNotExist,
         /// The claim is owned by another account, so caller can't revoke it.
         NotClaimOwner,
+        NotTransferSelf,
     }
 
     #[pallet::call] // <-- Step 6. code block will replace this.
@@ -115,7 +124,7 @@ pub mod pallet {
             let sender = ensure_signed(origin)?;
 
             let (owner, _) = Proofs::<T>::get(&claim).ok_or(Error::<T>::ClaimNotExist)?;
-
+            ensure!(sender == recipient, Error::<T>::NotTransferSelf);
             ensure!(sender == owner, Error::<T>::NotClaimOwner);
 
             let current_block = <frame_system::Pallet<T>>::block_number();
